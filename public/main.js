@@ -192,6 +192,14 @@ $(function() {
         return COLORS[index];
     }
 
+    function sendPosition(position) {
+        if(connected) {
+            // console.log(position.coords.latitude);
+            // console.log(position.coords.latitude);
+            socket.emit('gps position', position.coords.latitude, position.coords.longitude);
+        }
+    }
+
     // Keyboard events
 
     $window.keydown(function (event) {
@@ -267,7 +275,7 @@ $(function() {
     socket.on('usernames sent', function(data) {
         var found = false;
         for(var user in data){
-            if(user == username){
+            if(user.username == username){
                 found = true;
                 alert("Username is currently in use, please use a different username.");
                 username = "";
@@ -288,14 +296,7 @@ $(function() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(sendPosition);
         } else {
-            x.innerHTML = "Geolocation is not supported by this browser.";
-        }
-        function sendPosition(position) {
-          $inputMessage.val("Latitude: " + position.coords.latitude + 
-            ",Longitude: " + position.coords.longitude);
-          console.log($inputMessage.val());
-          sendMessage();
-
+            console.log("Geolocation is not supported by this browser.");
         }
     }, 1000);
 });
