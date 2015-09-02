@@ -35,12 +35,16 @@ $(function() {
   log(message);
 }
 
+  function checkUsername(){
+    username = cleanInput($usernameInput.val().trim());
+    if (username) {
+      socket.emit('username list');
+    }
+  }
+
   // Sets the client's username
   function setUsername () {
-    username = cleanInput($usernameInput.val().trim());
 
-    // If the username is valid
-    if (username) {
       $loginPage.fadeOut();
       $chatPage.show();
       $loginPage.off('click');
@@ -48,7 +52,6 @@ $(function() {
 
       // Tell the server your username
       socket.emit('add user', username);
-  }
 }
 
   // Sends a chat message
@@ -202,7 +205,7 @@ $(function() {
         socket.emit('stop typing');
         typing = false;
     } else {
-        setUsername();
+        checkUsername();
     }
 }
 });
@@ -257,6 +260,19 @@ $(function() {
   // Whenever the server emits 'typing', show the typing message
   socket.on('typing', function (data) {
     addChatTyping(data);
+});
+  socket.on('usernames sent', function(data) {
+    var found = false;
+    for(var user in data){
+      if(user == username){
+        found = true;
+        alert("Username is currently in use, please use a different username.");
+        username = "";
+      }
+    }
+    if(!found){
+      setUsername();
+    }
 });
 
     // Whenever the server emits 'stop typing', kill the typing message

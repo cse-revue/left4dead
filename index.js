@@ -29,7 +29,9 @@ io.on('connection', function (socket) {
       message: data
     });
   });
-
+  socket.on('username list', function(){
+    io.sockets.connected[socket.id].emit('usernames sent', usernames);
+  });
   // when the client emits 'add user', this listens and executes
   socket.on('add user', function (username) {
     // we store the username in the socket session for this client
