@@ -26,13 +26,13 @@ $(function() {
     var socket = io();
     
     if (getCookie('username')) {
-       /* username = getCookie('username');
+        username = getCookie('username');
         $loginPage.hide();
         $chatPage.show();
         $loginPage.off('click');
         $currentInput = $inputMessage.focus();
         connected = true;
-        socket.emit('login');                */
+        socket.emit('add user');                
     }
 
     function addParticipantsMessage (data) {
