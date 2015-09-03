@@ -15,7 +15,7 @@ app.use(express.static(__dirname + '/public'));
 // Chatroom
 
 // usernames which are currently connected to the chat
-var usernames = {};
+var users = {};
 var numUsers = 0;
 
 io.on('connection', function (socket) {
@@ -31,7 +31,7 @@ io.on('connection', function (socket) {
     });
 
     socket.on('username list', function(){
-        io.sockets.connected[socket.id].emit('usernames sent', usernames);
+        io.sockets.connected[socket.id].emit('usernames sent', users);
     });
   
     // when the client emits 'add user', this listens and executes
@@ -39,7 +39,11 @@ io.on('connection', function (socket) {
         // we store the username in the socket session for this client
         socket.username = username;
         // add the client's username to the global list
-        usernames[username] = username;
+        users[username] = {
+            latitude: 0,
+            longitude: 0
+        };
+
         ++numUsers;
         addedUser = true;
         socket.emit('login', {
@@ -71,7 +75,7 @@ io.on('connection', function (socket) {
     socket.on('disconnect', function () {
         // remove the username from global usernames list
         if (addedUser) {
-            delete usernames[socket.username];
+            delete users[socket.username];
             --numUsers;
             // echo globally that this client has left
             socket.broadcast.emit('user left', {
@@ -79,5 +83,10 @@ io.on('connection', function (socket) {
                 numUsers: numUsers
             });
         }
+    });
+
+    socket.on('gps position', function (latitude, longitude) {
+        users[socket.username].latitude = latitude;
+        users[socket.username].longitude = longitude;
     });
 });
