@@ -17,6 +17,7 @@ app.use(express.static(__dirname + '/public'));
 // usernames which are currently connected to the chat
 var users = {};
 var numUsers = 0;
+var status = ("surv", "zomb", "dead");
 
 io.on('connection', function (socket) {
     var addedUser = false;
@@ -41,9 +42,9 @@ io.on('connection', function (socket) {
         // add the client's username to the global list
         users[username] = {
             latitude: 0,
-            longitude: 0
+            longitude: 0,
+            stat: status[Math.random(1)]
         };
-
         ++numUsers;
         addedUser = true;
         socket.emit('login', {
