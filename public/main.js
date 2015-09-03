@@ -26,13 +26,13 @@ $(function() {
     var socket = io();
     
     if (getCookie('username')) {
-        username = getCookie('username');
+       /* username = getCookie('username');
         $loginPage.hide();
         $chatPage.show();
         $loginPage.off('click');
         $currentInput = $inputMessage.focus();
         connected = true;
-        socket.emit('add user', username);                
+        socket.emit('login');                */
     }
 
     function addParticipantsMessage (data) {
@@ -286,7 +286,7 @@ $(function() {
     socket.on('usernames sent', function(data) {
         var found = false;
         for(var user in data){
-            if(user.username == username){
+            if(user == username){
                 found = true;
                 alert("Username is currently in use, please use a different username.");
                 username = "";
