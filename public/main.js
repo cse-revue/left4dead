@@ -24,6 +24,16 @@ $(function() {
     var $currentInput = $usernameInput.focus();
 
     var socket = io();
+    
+    if (getCookie('username')) {
+        username = getCookie('username');
+        $loginPage.hide();
+        $chatPage.show();
+        $loginPage.off('click');
+        $currentInput = $inputMessage.focus();
+        connected = true;
+        socket.emit('add user', username);                
+    }
 
     function addParticipantsMessage (data) {
         var message = '';
@@ -49,6 +59,9 @@ $(function() {
         $loginPage.off('click');
         $currentInput = $inputMessage.focus();
 
+        //set username locally
+        setCookie('username', username);
+        
         // Tell the server your username
         socket.emit('add user', username);
     }
@@ -194,8 +207,6 @@ $(function() {
 
     function sendPosition(position) {
         if(connected) {
-            // console.log(position.coords.latitude);
-            // console.log(position.coords.latitude);
             socket.emit('gps position', position.coords.latitude, position.coords.longitude);
         }
     }
@@ -300,3 +311,21 @@ $(function() {
         }
     }, 1000);
 });
+
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+d.toUTCString();
+    document.cookie = cname + "=" + cvalue + "; " + expires;
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+    }
+    return "";
+}

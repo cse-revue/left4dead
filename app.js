@@ -75,7 +75,7 @@ io.on('connection', function (socket) {
     socket.on('disconnect', function () {
         // remove the username from global usernames list
         if (addedUser) {
-            delete users[socket.username];
+            //delete users[socket.username];
             --numUsers;
             // echo globally that this client has left
             socket.broadcast.emit('user left', {
@@ -85,7 +85,7 @@ io.on('connection', function (socket) {
         }
     });
 
-    socket.on('gps position', function (latitude, longitude) {
+    socket.on('gps position', function (latitude, longitude) {        
         users[socket.username].latitude = latitude;
         users[socket.username].longitude = longitude;
     });
