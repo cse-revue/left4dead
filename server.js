@@ -91,7 +91,10 @@ io.on('connection', function (socket) {
         //gets current time
         var d = new Date();
         //sets dead timeout for 30 seconds
-        disconnect.setTime(d.getTime() + 30 * 1000);
+        if (user[socket.username]) {
+            disconnect.setTime(d.getTime() + 30 * 1000);
+        }
+        
         
         // echo globally that this client has left
         socket.broadcast.emit('user left', {
