@@ -87,9 +87,9 @@ io.on('connection', function (socket) {
     });
 
     socket.on('gps position', function (latitude, longitude) {        
-        if(users[socket.username] !+= null) {
+        if(users[socket.username] !== null) {
             users[socket.username].latitude = latitude;
-            users[socket.username].longitude = longitude;
+            users[socket.username].longitude = longitude;   
         }
     });
 });
