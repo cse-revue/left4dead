@@ -2,7 +2,7 @@
   "name": "left4dead",
   "version": "0.0.0",
   "description": "A simple chat client using socket.io",
-  "main": "app.js",
+  "main": "server.js",
   "author": "Vincent Tran",
   "private": true,
   "license": "BSD",
