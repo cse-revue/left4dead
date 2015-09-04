@@ -32,7 +32,7 @@ $(function() {
         $loginPage.off('click');
         $currentInput = $inputMessage.focus();
         connected = true;
-        socket.emit('add user');                
+        socket.emit('add user', username);
     }
 
     function addParticipantsMessage (data) {
@@ -276,6 +276,12 @@ $(function() {
         log(data.username + ' left');
         addParticipantsMessage(data);
         removeChatTyping(data);
+    });
+
+    // Whenever the server emits 'user reconnected', log it in the chat body
+    socket.on('user reconnected', function (data) {
+        log(data.username + ' reconnected');
+        addParticipantsMessage(data);
     });
 
     // Whenever the server emits 'typing', show the typing message

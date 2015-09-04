@@ -20,8 +20,6 @@ var numUsers = 0;
 var status = ("surv", "zomb", "dead");
 
 io.on('connection', function (socket) {
-    var addedUser = false;
-
     // when the client emits 'new message', this listens and executes
     socket.on('new message', function (data) {
         // we tell the client to execute 'new message'
@@ -37,25 +35,34 @@ io.on('connection', function (socket) {
   
     // when the client emits 'add user', this listens and executes
     socket.on('add user', function (username) {
-        // we store the username in the socket session for this client
+        // we store the username in the socket session for this client    
         socket.username = username;
-        // add the client's username to the global list
-        users[username] = {
-            latitude: 0,
-            longitude: 0,
-            stat: status[Math.random(1)]
-        };
-        ++numUsers;
-        addedUser = true;
-        socket.emit('login', {
-            numUsers: numUsers
-        });
+        
+        if(users[socket.username] === undefined) {
+            // add the client's username to the global list
+            users[username] = {
+                latitude: 0,
+                longitude: 0,
+                stat: status[Math.random(1)]
+            };
+            ++numUsers;
+            socket.emit('login', {
+                numUsers: numUsers
+            });
 
-        // echo globally (all clients) that a person has connected
-        socket.broadcast.emit('user joined', {
-            username: socket.username,
-            numUsers: numUsers
-        });
+            // echo globally (all clients) that a person has connected
+            socket.broadcast.emit('user joined', {
+                username: socket.username,
+                numUsers: numUsers
+            });
+        } else {
+            ++numUsers;
+            // echo globally (all clients) that a person has connected
+            socket.broadcast.emit('user reconnected', {
+                username: socket.username,
+                numUsers: numUsers
+            });
+        }
     });
 
     // when the client emits 'typing', we broadcast it to others
@@ -74,20 +81,16 @@ io.on('connection', function (socket) {
 
     // when the user disconnects.. perform this
     socket.on('disconnect', function () {
-        // remove the username from global usernames list
-        if (addedUser) {
-            //delete users[socket.username];
-            --numUsers;
-            // echo globally that this client has left
-            socket.broadcast.emit('user left', {
-                username: socket.username,
-                numUsers: numUsers
-            });
-        }
+        --numUsers;
+        // echo globally that this client has left
+        socket.broadcast.emit('user left', {
+            username: socket.username,
+            numUsers: numUsers
+        });
     });
 
     socket.on('gps position', function (latitude, longitude) {        
-        if(users[socket.username] !== null) {
+        if(users[socket.username] !== undefined) {
             users[socket.username].latitude = latitude;
             users[socket.username].longitude = longitude;   
         }
