@@ -20,14 +20,6 @@ var numUsers = 0;
 var status = ("surv", "zomb", "dead");
 
 io.on('connection', function (socket) {
-    // when the client emits 'new message', this listens and executes
-    socket.on('new message', function (data) {
-        // we tell the client to execute 'new message'
-        socket.broadcast.emit('new message', {
-            username: socket.username,
-            message: data
-        });
-    });
 
     socket.on('username list', function(){
         io.sockets.connected[socket.id].emit('usernames sent', users);
@@ -37,7 +29,7 @@ io.on('connection', function (socket) {
     socket.on('add user', function (username) {
         // we store the username in the socket session for this client    
         socket.username = username;
-        
+
         if(users[socket.username] === undefined) {
             // add the client's username to the global list
             users[username] = {
@@ -63,20 +55,6 @@ io.on('connection', function (socket) {
                 numUsers: numUsers
             });
         }
-    });
-
-    // when the client emits 'typing', we broadcast it to others
-    socket.on('typing', function () {
-        socket.broadcast.emit('typing', {
-            username: socket.username
-        });
-    });
-
-    // when the client emits 'stop typing', we broadcast it to others
-    socket.on('stop typing', function () {
-        socket.broadcast.emit('stop typing', {
-            username: socket.username
-        });
     });
 
     // when the user disconnects.. perform this
