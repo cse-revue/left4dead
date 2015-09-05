@@ -19,6 +19,9 @@ var users = {};
 var numUsers = 0;
 var status = ("surv", "zomb", "dead");
 
+//30s disconnect timeout
+var dcTimeout = 30;
+
 io.on('connection', function (socket) {
     // when the client emits 'new message', this listens and executes
     socket.on('new message', function (data) {
@@ -92,7 +95,7 @@ io.on('connection', function (socket) {
         var d = new Date();
         //sets dead timeout for 30 seconds
         if (user[socket.username]) {
-            disconnect.setTime(d.getTime() + 30 * 1000);
+            user[socket.username].disconnect.setTime(d.getTime() + dcTimeout * 1000);
         }
         
         
