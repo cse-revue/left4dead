@@ -18,6 +18,7 @@ app.use(express.static(__dirname + '/public'));
 var users = {};
 var numUsers = 0;
 var status = ("surv", "zomb", "dead");
+var adminId = "";
 
 io.on('connection', function (socket) {
 
@@ -29,7 +30,9 @@ io.on('connection', function (socket) {
     socket.on('add user', function (username) {
         // we store the username in the socket session for this client    
         socket.username = username;
-
+        if(username == "Administrator"){
+            adminId = socket.id;
+        }
         if(users[socket.username] === undefined) {
             // add the client's username to the global list
             users[username] = {

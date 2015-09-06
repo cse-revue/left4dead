@@ -13,6 +13,7 @@ $(function() {
 
     var $loginPage = $('.login.page'); // The login page
     var $mapPage = $('.map.page'); // The chatroom page
+    var $adminPage = $('.admin.page');
 
     // Prompt for setting a username
     var username;
@@ -23,7 +24,7 @@ $(function() {
     if (getCookie('username')) {
         username = getCookie('username');
         $loginPage.hide();
-        $mapPage.show();
+        showPage();
         initMap();
         $loginPage.off('click');
         connected = true;
@@ -40,7 +41,7 @@ $(function() {
     // Sets the client's username
     function setUsername () {
         $loginPage.fadeOut();
-        $mapPage.show();
+        showPage();
         initMap();
         $loginPage.off('click');
 
@@ -63,6 +64,13 @@ $(function() {
     // Focus input when clicking anywhere on login page
     $loginPage.click(function () {
         $usernameInput.focus();
+    });
+
+    //Keyboard Event
+    $window.keydown(function(event){
+        if(event.which === 13 && !connected){
+            checkUsername();
+        }
     });
 
     // Socket events
@@ -110,22 +118,37 @@ $(function() {
             console.log("Geolocation is not supported by this browser.");
         }
     }, 1000);
+    function showPage(){
+        if(username != "Administrator"){
+            $mapPage.show();            
+        }
+        else{
+            $adminPage.show();
+        }
+    }
+
+    // Prevents input from having injected markup
+    function cleanInput (input) {
+        return $('<div/>').text(input).text();
+    }
+    function setCookie(cname, cvalue, exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays*24*60*60*1000));
+        var expires = "expires="+d.toUTCString();
+        document.cookie = cname + "=" + cvalue + "; " + expires;
+    }
+
+    function getCookie(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0; i<ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1);
+            if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+        }
+        return "";
+    }
+
 });
 
-function setCookie(cname, cvalue, exdays) {
-    var d = new Date();
-    d.setTime(d.getTime() + (exdays*24*60*60*1000));
-    var expires = "expires="+d.toUTCString();
-    document.cookie = cname + "=" + cvalue + "; " + expires;
-}
 
-function getCookie(cname) {
-    var name = cname + "=";
-    var ca = document.cookie.split(';');
-    for(var i=0; i<ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1);
-        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
-    }
-    return "";
-}
