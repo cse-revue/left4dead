@@ -20,6 +20,8 @@ var numUsers = 0;
 var status = ("surv", "zomb", "dead");
 var adminId = "";
 
+var adminName = "a";
+
 io.on('connection', function (socket) {
 
     socket.on('username list', function(){
@@ -30,8 +32,11 @@ io.on('connection', function (socket) {
     socket.on('add user', function (username) {
         // we store the username in the socket session for this client    
         socket.username = username;
-        if(username == "Administrator"){
+        if(username == adminName){
             adminId = socket.id;
+        }
+        else if(adminId != ""){
+            io.sockets.connected[adminId].emit('appendDropDown', username);
         }
         if(users[socket.username] === undefined) {
             // add the client's username to the global list
@@ -64,6 +69,9 @@ io.on('connection', function (socket) {
     socket.on('disconnect', function () {
         --numUsers;
         // echo globally that this client has left
+        if(socket.username != "adminName" && adminId != ""){
+            io.sockets.connected[adminId].emit('removeDropDown', socket.username);           
+        }
         socket.broadcast.emit('user left', {
             username: socket.username,
             numUsers: numUsers
@@ -75,5 +83,9 @@ io.on('connection', function (socket) {
             users[socket.username].latitude = latitude;
             users[socket.username].longitude = longitude;   
         }
+    });
+
+    socket.on('changeStatus', function(username, status){
+        username.status = status;
     });
 });

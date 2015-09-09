@@ -19,8 +19,11 @@ $(function() {
     var username;
     var connected = false;
 
+    var adminName = "a"
+
     var socket = io();
     
+
     if (getCookie('username')) {
         username = getCookie('username');
         $loginPage.hide();
@@ -105,12 +108,19 @@ $(function() {
                 username = "";
             }
         }
-        
         if(!found){
             setUsername();
         }
     });
 
+    //Admin socket
+    socket.on('appendDropDown', function(username){
+        $('#userDropDown').append( new Option(username, username));
+
+    });
+    socket.on('removeDropDown', function(username){
+        userDropDown.remove(username);
+    });
     setInterval(function(){
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(sendPosition);
@@ -119,10 +129,12 @@ $(function() {
         }
     }, 1000);
     function showPage(){
-        if(username != "Administrator"){
-            $mapPage.show();            
+        if(username != adminName){
+            $adminPage.hide(); 
+            $mapPage.show();
         }
         else{
+
             $adminPage.show();
         }
     }
@@ -151,4 +163,6 @@ $(function() {
 
 });
 
-
+function changeStatus(){
+    socket.emit('changeStatus', ($('#userDropDown option:selected')), ($('#Status option:selected')));
+}

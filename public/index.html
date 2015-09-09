@@ -18,7 +18,22 @@
             </li>
             <li class="admin page">
                 <div id="user status" tabindex="0"></div>
-                <div id="user change"></div>
+                <div id="user change">
+                    <select id="userDropDown"></select>
+                    <select id="Status">
+                        <option value="surv">Survivor</option>
+                        <option value="zomb">Zombie</option>
+                        <option value="dead">Dead</option>
+                    </select>
+                    <button id="changeStatus" onclick="changeStatus()"> Change Status </button>
+                </div>
+                <br>
+                <div>
+                    <table id="userTable">
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
                 <div id="map" class="map" tabindex="0"></div>
             </li>
             <li class="login page">
