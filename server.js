@@ -36,14 +36,15 @@ io.on('connection', function (socket) {
             adminId = socket.id;
         }
         else if(adminId != ""){
-            io.sockets.connected[adminId].emit('appendDropDown', username);
+            io.to(adminId).emit('appendDropDown', username);
         }
         if(users[socket.username] === undefined) {
             // add the client's username to the global list
             users[username] = {
                 latitude: 0,
                 longitude: 0,
-                stat: status[Math.random(1)]
+                stat: status[Math.random(1)],
+                id: socket.id
             };
             ++numUsers;
             socket.emit('login', {
@@ -69,8 +70,9 @@ io.on('connection', function (socket) {
     socket.on('disconnect', function () {
         --numUsers;
         // echo globally that this client has left
-        if(socket.username != "adminName" && adminId != ""){
-            io.sockets.connected[adminId].emit('removeDropDown', socket.username);           
+        //admin removes from dropdown, doesn't do this if the admin is leaving.
+        if(socket.username != adminName && adminId != ""){
+            io.to(adminId).emit('removeDropDown', socket.username);           
         }
         socket.broadcast.emit('user left', {
             username: socket.username,
@@ -86,6 +88,7 @@ io.on('connection', function (socket) {
     });
 
     socket.on('changeStatus', function(username, status){
-        username.status = status;
+        users[username].status = status;
+        io.to(users[username].id).emit('change status', status);
     });
 });

@@ -23,6 +23,7 @@ $(function() {
 
     var socket = io();
     
+    var myStatus = "";
 
     if (getCookie('username')) {
         username = getCookie('username');
@@ -33,6 +34,12 @@ $(function() {
         connected = true;
         socket.emit('add user', username);
     }
+    //Admin stuff for changing users statuses.
+    $('#changeStatus').click(function(){
+        var a = $('#userDropDown').val();
+        var b = $('#Status').val();
+        socket.emit('changeStatus', a, b);
+    });
 
     function checkUsername(){
         username = cleanInput($usernameInput.val().trim());
@@ -99,6 +106,10 @@ $(function() {
         addParticipantsMessage(data);
     });
 
+    socket.on('change status', function(status){
+        myStatus = status;
+    });
+
     socket.on('usernames sent', function(data) {
         var found = false;
         for(var user in data){
@@ -119,8 +130,11 @@ $(function() {
 
     });
     socket.on('removeDropDown', function(username){
-        userDropDown.remove(username);
+        if(username == adminName){
+            userDropDown.remove(username);            
+        }
     });
+
     setInterval(function(){
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(sendPosition);
@@ -130,12 +144,12 @@ $(function() {
     }, 1000);
     function showPage(){
         if(username != adminName){
-            $adminPage.hide(); 
-            $mapPage.show();
+            $('#adminPage').hide(); 
+            $('#mapPage').show();
         }
         else{
-
-            $adminPage.show();
+            $('#mapPage').hide();
+            $('#adminPage').show();
         }
     }
 
@@ -163,6 +177,3 @@ $(function() {
 
 });
 
-function changeStatus(){
-    socket.emit('changeStatus', ($('#userDropDown option:selected')), ($('#Status option:selected')));
-}
