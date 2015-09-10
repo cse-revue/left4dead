@@ -95,4 +95,13 @@ io.on('connection', function (socket) {
             users[socket.username].longitude = longitude;   
         }
     });
+    
+    socket.on('get stat', function(username){
+        var ret = users[socket.username].stat;
+        socket.emit('return stat', { 
+            stat: ret 
+        });
+    });
+    
+     
 });

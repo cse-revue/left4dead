@@ -52,6 +52,14 @@ $(function() {
         }
     }
 
+    socket.on('add user', function getStat(){
+        socket.emit('get stat', username);
+    });
+    
+    socket.on('return stat', function (data){
+        log(data.stat);  
+    });    
+
     // Sets the client's username
     function setUsername () {
         $loginPage.fadeOut();
@@ -65,6 +73,7 @@ $(function() {
         // Tell the server your username
         socket.emit('add user', username);
     }
+
 
     // Sends a chat message
     function sendMessage () {
