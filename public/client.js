@@ -52,7 +52,7 @@ $(function() {
         }
     }
 
-    socket.on('login', function getStat(){
+    socket.on('add user', function getStat(){
         socket.emit('get stat', username);
     });
     
