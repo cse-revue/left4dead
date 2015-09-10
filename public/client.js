@@ -11,19 +11,21 @@ $(function() {
     var $window = $(window);
     var $usernameInput = $('.usernameInput'); // Input for username
 
-    var $loginPage = $('.login.page'); // The login page
-    var $mapPage = $('.map.page'); // The chatroom page
-    var $adminPage = $('.admin.page');
+    var $loginPage = $('#loginPage'); // The login page
+    var $mapPage = $('#mapPage'); // The chatroom page
+    var $adminPanel = $('#adminPanel');
 
     // Prompt for setting a username
     var username;
     var connected = false;
 
-    var adminName = "a"
+    var adminName = "a";
 
     var socket = io();
     
     var myStatus = "";
+
+    //Run these immediately on start.
 
     if (getCookie('username')) {
         username = getCookie('username');
@@ -144,13 +146,12 @@ $(function() {
     }, 1000);
     function showPage(){
         if(username != adminName){
-            $('#adminPage').hide(); 
-            $('#mapPage').show();
+            $(adminPanel).hide(); 
         }
         else{
-            $('#mapPage').hide();
-            $('#adminPage').show();
+            $(adminPanel).show();
         }
+        $(mapPage).show();
     }
 
     // Prevents input from having injected markup

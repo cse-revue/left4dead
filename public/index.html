@@ -13,35 +13,23 @@
     </head>
     <body>
         <ul class="pages">
-            <li id="playerPage" class="map page">
-                <div id="myInfo">
-                    <p> Status: </p>
-                    <p id="currentStatus"></p>
+            <li id="mapPage" class="map page">
+                <div id="adminPanel">
+                    <p>
+                        <div id="user change">
+                            <select id="userDropDown"></select>
+                            <select id="Status">
+                                <option value="surv">Survivor</option>
+                                <option value="zomb">Zombie</option>
+                                <option value="dead">Dead</option>
+                            </select>
+                            <button id="changeStatus"> Change Status </button>
+                        </div>
+                    </p>
                 </div>
                 <div id="map" class="map" tabindex="0"></div>
             </li>
-            <li id="adminPage" class="map page">
-                <p>
-                    <div id="user status" tabindex="0"></div>
-                    <div id="user change">
-                        <select id="userDropDown"></select>
-                        <select id="Status">
-                            <option value="surv">Survivor</option>
-                            <option value="zomb">Zombie</option>
-                            <option value="dead">Dead</option>
-                        </select>
-                        <button id="changeStatus"> Change Status </button>
-                    </div>
-                    <br>
-                    <div>
-                        <table id="userTable">
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </div>
-                </p>    
-                <div id="map" class="map" tabindex="0"></div>
-            </li>
+
             <li id="loginPage" class="login page">
                 <div class="form">
                     <h3 class="title">What's your nickname?</h3>
