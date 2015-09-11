@@ -156,6 +156,12 @@ $(function() {
         userDropDown.remove(username);            
     });
 
+    socket.on('populate users', function(users){
+        for(var user in users){
+            $('#userDropDown').append( new Option(user, user));
+        }
+    });
+
     socket.on('successful escape', function(){
         alert("Congratulations! You are win!");
     });

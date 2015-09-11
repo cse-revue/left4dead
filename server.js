@@ -34,6 +34,7 @@ io.on('connection', function (socket) {
         socket.username = username;
         if(username == adminName){
             adminId = socket.id;
+            socket.emit('populate users', users);
         }
         else if(adminId != ""){
             io.to(adminId).emit('appendDropDown', username);
