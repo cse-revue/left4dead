@@ -44,7 +44,8 @@ io.on('connection', function (socket) {
                 latitude: 0,
                 longitude: 0,
                 stat: status[0],
-                id: socket.id
+                id: socket.id,
+                escaped: false
             };
             ++numUsers;
             socket.emit('login', {
@@ -95,5 +96,9 @@ io.on('connection', function (socket) {
     socket.on('changeStatus', function(username, status){
         users[username].stat = status;
         io.to(users[username].id).emit('change status', status);
+    });
+    socket.on('changeEscaped', function(username, escaped){
+        users[username].escaped = escaped;
+        io.to(users[username].id).emit('successful escape');
     });
 });

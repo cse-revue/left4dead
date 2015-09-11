@@ -45,6 +45,12 @@ $(function() {
         socket.emit('changeStatus', a, b);
     });
 
+    $('#changeEscaped').click(function(){
+        var a = $('#userDropDown').val();
+        var b = $('#escaped').val();
+        socket.emit('changeEscaped', a, b);
+    });
+
     function checkUsername(){
         username = cleanInput($usernameInput.val().trim());
         if (username) {
@@ -150,7 +156,9 @@ $(function() {
         userDropDown.remove(username);            
     });
 
-
+    socket.on('successful escape', function(){
+        alert("Congratulations! You are win!");
+    });
     socket.on('debug', function(message){
         alert(message);
     });

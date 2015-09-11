@@ -17,13 +17,21 @@
                 <div id="adminPanel">
                     <p>
                         <div id="user change">
-                            <select id="userDropDown"></select>
+                            <h2>Select Player</h2>
+                            <select id="userDropDown"></select><br>
+                            <h2>Change Status of player (Dead, Zomb, Surv)</h2>
                             <select id="Status">
                                 <option value="surv">Survivor</option>
                                 <option value="zomb">Zombie</option>
                                 <option value="dead">Dead</option>
                             </select>
                             <button id="changeStatus"> Change Status </button>
+                            <h2>Set player as escaped or not</h2>
+                            <select id="escaped">
+                                <option value="true">Escaped</option>
+                                <option value="false">Not Escaped</option>
+                            </select>
+                            <button id="changeEscaped"> Change Escaped </button>
                         </div>
                     </p>
                 </div>
