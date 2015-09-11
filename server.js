@@ -19,6 +19,9 @@ var users = {};
 var numUsers = 0;
 var status = ("surv", "zomb", "dead");
 
+//30s disconnect timeout
+var DISCONNECT_TIMEOUT = 30;
+
 io.on('connection', function (socket) {
 
     socket.on('username list', function(){
@@ -35,7 +38,8 @@ io.on('connection', function (socket) {
             users[username] = {
                 latitude: 0,
                 longitude: 0,
-                stat: status[Math.random(1)]
+                stat: status[0],
+                disconnect: new Date()
             };
             ++numUsers;
             socket.emit('login', {
@@ -50,6 +54,10 @@ io.on('connection', function (socket) {
         } else {
             ++numUsers;
             // echo globally (all clients) that a person has connected
+            var currTime = new Date();
+            if (currTime > users[socket.username].disconnect) {
+                users[socket.username].stat = status[2];
+            }
             socket.broadcast.emit('user reconnected', {
                 username: socket.username,
                 numUsers: numUsers
@@ -60,6 +68,15 @@ io.on('connection', function (socket) {
     // when the user disconnects.. perform this
     socket.on('disconnect', function () {
         --numUsers;
+        
+        //gets current time
+        var d = new Date();
+        //sets dead timeout for 30 seconds
+        if (user[socket.username]) {
+            user[socket.username].disconnect.setTime(d.getTime() + DISCONNECT_TIMEOUT * 1000);
+        }
+        
+        
         // echo globally that this client has left
         socket.broadcast.emit('user left', {
             username: socket.username,
