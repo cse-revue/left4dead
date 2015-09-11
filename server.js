@@ -17,7 +17,7 @@ app.use(express.static(__dirname + '/public'));
 // usernames which are currently connected to the chat
 var users = {};
 var numUsers = 0;
-var status = ("surv", "zomb", "dead");
+var status = ["surv", "zomb", "dead"];
 var adminId = "";
 
 var adminName = "a";
@@ -25,7 +25,7 @@ var adminName = "a";
 io.on('connection', function (socket) {
 
     socket.on('username list', function(){
-        io.sockets.connected[socket.id].emit('usernames sent', users);
+        io.to(socket.id).emit('usernames sent', users);
     });
   
     // when the client emits 'add user', this listens and executes
@@ -43,7 +43,7 @@ io.on('connection', function (socket) {
             users[username] = {
                 latitude: 0,
                 longitude: 0,
-                stat: status[Math.random(1)],
+                stat: status[0],
                 id: socket.id
             };
             ++numUsers;
@@ -72,7 +72,8 @@ io.on('connection', function (socket) {
         // echo globally that this client has left
         //admin removes from dropdown, doesn't do this if the admin is leaving.
         if(socket.username != adminName && adminId != ""){
-            io.to(adminId).emit('removeDropDown', socket.username);           
+            io.to(adminId).emit('removeDropDown', socket.username); 
+            //io.to(adminId).emit('debug', socket.username);           
         }
         socket.broadcast.emit('user left', {
             username: socket.username,
@@ -87,8 +88,12 @@ io.on('connection', function (socket) {
         }
     });
 
+    socket.on('get status', function(username){
+        socket.emit('change status', users[username].stat);
+    });
+
     socket.on('changeStatus', function(username, status){
-        users[username].status = status;
+        users[username].stat = status;
         io.to(users[username].id).emit('change status', status);
     });
 });

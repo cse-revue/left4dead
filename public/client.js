@@ -14,6 +14,7 @@ $(function() {
     var $loginPage = $('#loginPage'); // The login page
     var $mapPage = $('#mapPage'); // The chatroom page
     var $adminPanel = $('#adminPanel');
+    var $playerPanel = $('#playerPanel');
 
     // Prompt for setting a username
     var username;
@@ -35,6 +36,7 @@ $(function() {
         $loginPage.off('click');
         connected = true;
         socket.emit('add user', username);
+        getStatus();
     }
     //Admin stuff for changing users statuses.
     $('#changeStatus').click(function(){
@@ -56,12 +58,11 @@ $(function() {
         showPage();
         initMap();
         $loginPage.off('click');
-
         //set username locally
         setCookie('username', username);
-        
         // Tell the server your username
         socket.emit('add user', username);
+        getStatus();
     }
 
     function sendPosition(position) {
@@ -71,6 +72,9 @@ $(function() {
         updatePlayerPosition(position);
     }
 
+    function getStatus(){
+        socket.emit('get status', username);
+    }
     // Click events
 
     // Focus input when clicking anywhere on login page
@@ -110,6 +114,17 @@ $(function() {
 
     socket.on('change status', function(status){
         myStatus = status;
+        var text = "";
+        if(myStatus == "surv"){
+            text = "Survivor";
+        }
+        else if(myStatus == "zomb"){
+            text = "Zombie";
+        }
+        else{
+            text = "Dead";
+        }
+        $("#currentStatus").text("Status: " + text);
     });
 
     socket.on('usernames sent', function(data) {
@@ -132,11 +147,13 @@ $(function() {
 
     });
     socket.on('removeDropDown', function(username){
-        if(username == adminName){
-            userDropDown.remove(username);            
-        }
+        userDropDown.remove(username);            
     });
 
+
+    socket.on('debug', function(message){
+        alert(message);
+    });
     setInterval(function(){
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(sendPosition);
@@ -146,9 +163,11 @@ $(function() {
     }, 1000);
     function showPage(){
         if(username != adminName){
-            $(adminPanel).hide(); 
+            $(adminPanel).hide();
+            $(playerPanel).show();
         }
         else{
+            $(playerPanel).hide();
             $(adminPanel).show();
         }
         $(mapPage).show();
