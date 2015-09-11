@@ -20,7 +20,7 @@ var numUsers = 0;
 var status = ("surv", "zomb", "dead");
 
 //30s disconnect timeout
-var dcTimeout = 30;
+var DISCONNECT_TIMEOUT = 30;
 
 io.on('connection', function (socket) {
     // when the client emits 'new message', this listens and executes
@@ -46,7 +46,7 @@ io.on('connection', function (socket) {
             users[username] = {
                 latitude: 0,
                 longitude: 0,
-                stat: status[Math.random(1)],
+                stat: status[0],
                 disconnect: new Date()
             };
             ++numUsers;
@@ -95,7 +95,7 @@ io.on('connection', function (socket) {
         var d = new Date();
         //sets dead timeout for 30 seconds
         if (user[socket.username]) {
-            user[socket.username].disconnect.setTime(d.getTime() + dcTimeout * 1000);
+            user[socket.username].disconnect.setTime(d.getTime() + DISCONNECT_TIMEOUT * 1000);
         }
         
         
