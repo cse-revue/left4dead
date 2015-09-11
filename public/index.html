@@ -3,17 +3,18 @@
     <head>
         <meta charset="UTF-8">
         <title>Socket.IO Chat Example</title>
-        <link rel="stylesheet" href="style.css">
-        <link rel="stylesheet" href="openlayers/ol.css">
-        <script src="/openlayers/ol.js"></script>
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/ol.css">
+        <script src="/js/jquery-1.10.2.min.js"></script>
+        <script src="/js/ol.js"></script>
+        <script src="/js/map.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/client.js"></script>
     </head>
     <body>
         <ul class="pages">
-            <li class="chat page">
-                <div class="chatArea">
-                    <ul class="messages"></ul>
-                </div>
-                <input class="inputMessage" placeholder="Type here..."/>
+            <li class="map page">
+                <div id="map" class="map" tabindex="0"></div>
             </li>
             <li class="login page">
                 <div class="form">
@@ -22,8 +23,5 @@
                 </div>
             </li>
         </ul>
-    <script src="/jquery-1.10.2.min.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/client.js"></script>
     </body>
 </html>
