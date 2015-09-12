@@ -50,6 +50,10 @@ $(function() {
         var b = $('#escaped').val();
         socket.emit('changeEscaped', a, b);
     });
+    
+    $('#startGame').click(function(){
+        socket.emit('game started');
+    });
 
     function checkUsername(){
         username = cleanInput($usernameInput.val().trim());
