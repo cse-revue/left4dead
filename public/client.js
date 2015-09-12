@@ -20,7 +20,7 @@ $(function() {
     var username;
     var connected = false;
 
-    var ADMIN_NAME = "a";
+    var adminName = "a";
 
     var socket = io();
     
@@ -115,10 +115,10 @@ $(function() {
     socket.on('change status', function(status){
         myStatus = status;
         var text = "";
-        if(myStatus == "SURV"){
+        if(myStatus == "surv"){
             text = "Survivor";
         }
-        else if(myStatus == "ZOMB"){
+        else if(myStatus == "zomb"){
             text = "Zombie";
         }
         else{
@@ -162,7 +162,7 @@ $(function() {
         }
     }, 1000);
     function showPage(){
-        if(username != ADMIN_NAME){
+        if(username != adminName){
             $(adminPanel).hide();
             $(playerPanel).show();
         }
