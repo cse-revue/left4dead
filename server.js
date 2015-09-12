@@ -131,5 +131,6 @@ io.on('connection', function (socket) {
                 user.id = socket.id;
                 user.escaped = "FALSE";
         }
+        socket.broadcast.emit('announce start');
     });
 });

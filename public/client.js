@@ -169,6 +169,11 @@ $(function() {
     socket.on('successful escape', function(){
         alert("Congratulations! You are win!");
     });
+    socket.on('announce start', function() {
+        //TODO add anything for user side on start up
+        //alert("Game has started");
+        myStatus = "SURV";
+    });
     socket.on('debug', function(message){
         alert(message);
     });
