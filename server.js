@@ -123,14 +123,6 @@ io.on('connection', function (socket) {
     });
     
     socket.on('game started', function(){
-        for (var user in users) {
-                user.latitude = 0;
-                user.longitude = 0;
-                user.stat = status[0];
-                user.disconnect = new Date();
-                user.id = socket.id;
-                user.escaped = "FALSE";
-        }
         socket.broadcast.emit('announce start');
     });
 });
