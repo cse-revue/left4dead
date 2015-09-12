@@ -17,10 +17,10 @@ app.use(express.static(__dirname + '/public'));
 // usernames which are currently connected to the chat
 var users = {};
 var numUsers = 0;
-var status = ["surv", "zomb", "dead"];
+var status = ["SURV", "ZOMB", "DEAD"];
 var adminId = "";
 
-var adminName = "a";
+var ADMIN_NAME = "a";
 
 io.on('connection', function (socket) {
 
@@ -32,7 +32,7 @@ io.on('connection', function (socket) {
     socket.on('add user', function (username) {
         // we store the username in the socket session for this client    
         socket.username = username;
-        if(username == adminName){
+        if(username == ADMIN_NAME){
             adminId = socket.id;
             socket.emit('populate users', users);
         }
@@ -46,7 +46,7 @@ io.on('connection', function (socket) {
                 longitude: 0,
                 stat: status[0],
                 id: socket.id,
-                escaped: false
+                escaped: "FALSE"
             };
             ++numUsers;
             socket.emit('login', {
@@ -73,7 +73,7 @@ io.on('connection', function (socket) {
         --numUsers;
         // echo globally that this client has left
         //admin removes from dropdown, doesn't do this if the admin is leaving.
-        if(socket.username != adminName && adminId != ""){
+        if(socket.username != ADMIN_NAME && adminId != ""){
             io.to(adminId).emit('removeDropDown', socket.username); 
             //io.to(adminId).emit('debug', socket.username);           
         }
@@ -100,6 +100,8 @@ io.on('connection', function (socket) {
     });
     socket.on('changeEscaped', function(username, escaped){
         users[username].escaped = escaped;
-        io.to(users[username].id).emit('successful escape');
+        if(escaped == "TRUE"){
+            io.to(users[username].id).emit('successful escape');            
+        }
     });
 });
