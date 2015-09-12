@@ -20,7 +20,7 @@ $(function() {
     var username;
     var connected = false;
 
-    var adminName = "a";
+    var ADMIN_NAME = "a";
 
     var socket = io();
     
@@ -43,6 +43,12 @@ $(function() {
         var a = $('#userDropDown').val();
         var b = $('#Status').val();
         socket.emit('changeStatus', a, b);
+    });
+
+    $('#changeEscaped').click(function(){
+        var a = $('#userDropDown').val();
+        var b = $('#escaped').val();
+        socket.emit('changeEscaped', a, b);
     });
 
     function checkUsername(){
@@ -115,10 +121,10 @@ $(function() {
     socket.on('change status', function(status){
         myStatus = status;
         var text = "";
-        if(myStatus == "surv"){
+        if(myStatus == "SURV"){
             text = "Survivor";
         }
-        else if(myStatus == "zomb"){
+        else if(myStatus == "ZOMB"){
             text = "Zombie";
         }
         else{
@@ -150,7 +156,15 @@ $(function() {
         userDropDown.remove(username);            
     });
 
+    socket.on('populate users', function(users){
+        for(var user in users){
+            $('#userDropDown').append( new Option(user, user));
+        }
+    });
 
+    socket.on('successful escape', function(){
+        alert("Congratulations! You are win!");
+    });
     socket.on('debug', function(message){
         alert(message);
     });
@@ -162,7 +176,7 @@ $(function() {
         }
     }, 1000);
     function showPage(){
-        if(username != adminName){
+        if(username != ADMIN_NAME){
             $(adminPanel).hide();
             $(playerPanel).show();
         }

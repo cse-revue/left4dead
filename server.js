@@ -17,10 +17,10 @@ app.use(express.static(__dirname + '/public'));
 // usernames which are currently connected to the chat
 var users = {};
 var numUsers = 0;
-var status = ["surv", "zomb", "dead"];
+var status = ["SURV", "ZOMB", "DEAD"];
 var adminId = "";
 
-var adminName = "a";
+var ADMIN_NAME = "a";
 
 //30s disconnect timeout
 var DISCONNECT_TIMEOUT = 30;
@@ -35,8 +35,9 @@ io.on('connection', function (socket) {
     socket.on('add user', function (username) {
         // we store the username in the socket session for this client    
         socket.username = username;
-        if(username == adminName){
+        if(username == ADMIN_NAME){
             adminId = socket.id;
+            socket.emit('populate users', users);
         }
         else if(adminId != ""){
             io.to(adminId).emit('appendDropDown', username);
@@ -47,8 +48,9 @@ io.on('connection', function (socket) {
                 latitude: 0,
                 longitude: 0,
                 stat: status[0],
-                disconnect: new Date()
-                id: socket.id
+                disconnect: new Date(),
+                id: socket.id,
+                escaped: "FALSE"
             };
             ++numUsers;
             socket.emit('login', {
@@ -88,7 +90,7 @@ io.on('connection', function (socket) {
         
         // echo globally that this client has left
         //admin removes from dropdown, doesn't do this if the admin is leaving.
-        if(socket.username != adminName && adminId != ""){
+        if(socket.username != ADMIN_NAME && adminId != ""){
             io.to(adminId).emit('removeDropDown', socket.username); 
             //io.to(adminId).emit('debug', socket.username);           
         }
@@ -112,5 +114,11 @@ io.on('connection', function (socket) {
     socket.on('changeStatus', function(username, status){
         users[username].stat = status;
         io.to(users[username].id).emit('change status', status);
+    });
+    socket.on('changeEscaped', function(username, escaped){
+        users[username].escaped = escaped;
+        if(escaped == "TRUE"){
+            io.to(users[username].id).emit('successful escape');            
+        }
     });
 });
