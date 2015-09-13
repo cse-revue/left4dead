@@ -129,6 +129,10 @@ io.on('connection', function (socket) {
         }
     });
 
+    socket.on('game started', function(){
+        socket.broadcast.emit('announce start');
+    });
+
     // Show location of survivors
     setInterval(function() {
         var survivorPositions = [];

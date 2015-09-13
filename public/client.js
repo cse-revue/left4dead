@@ -52,6 +52,10 @@ $(function() {
         var b = $('#escaped').val();
         socket.emit('changeEscaped', a, b);
     });
+    
+    $('#startGame').click(function(){
+        socket.emit('game started');
+    });
 
     function checkUsername(){
         username = cleanInput($usernameInput.val().trim());
@@ -160,6 +164,12 @@ $(function() {
         alert("Congratulations! You are win!");
     });
 
+    socket.on('announce start', function() {
+        //TODO add anything for user side on start up
+        //alert("Game has started");
+        myStatus = "SURV";
+    });
+
     socket.on('debug', function(message){
         alert(message);
     });
@@ -206,5 +216,4 @@ $(function() {
         }
         return "";
     }
-
 });
