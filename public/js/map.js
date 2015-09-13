@@ -27,6 +27,9 @@ function updatePlayerPosition(position) {
         geometry: new ol.geom.Point(ol.proj.transform([position.coords.longitude, position.coords.latitude], 'EPSG:4326', 'EPSG:3857')),
         name: 'Player', // Insert player name
     });
+    var s = new ol.Sphere(6378137);
+    console.log(position.coords.longitude + " " + position.coords.latitude);
+    console.log(s.haversineDistance([151.2309325, -33.918778599999996],[position.coords.longitude, position.coords.latitude]));
 
     var playerIconStyle = new ol.style.Style({
         image: new ol.style.Circle({
