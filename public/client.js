@@ -1,3 +1,5 @@
+var GPS_UPDATE_INTERVAL = 1000;
+
 $(function() {
     var FADE_TIME = 150; // ms
     var TYPING_TIMER_LENGTH = 400; // ms
@@ -106,22 +108,6 @@ $(function() {
         connected = true;
     });
 
-    // Whenever the server emits 'user joined', log it in the chat body
-    socket.on('user joined', function (data) {
-        addParticipantsMessage(data);
-    });
-
-    // Whenever the server emits 'user left', log it in the chat body
-    socket.on('user left', function (data) {
-        addParticipantsMessage(data);
-        removeChatTyping(data);
-    });
-
-    // Whenever the server emits 'user reconnected', log it in the chat body
-    socket.on('user reconnected', function (data) {
-        addParticipantsMessage(data);
-    });
-
     socket.on('change status', function(status){
         myStatus = status;
         var text = "";
@@ -151,11 +137,19 @@ $(function() {
         }
     });
 
+    socket.on('survivor ping', function(data) {
+        updateSurvivorPositions(data);
+    });
+
+    socket.on('zombie ping', function(data) {
+        updateZombiePositions(data);
+    });
+
     //Admin socket
     socket.on('appendDropDown', function(username){
         $('#userDropDown').append( new Option(username, username));
-
     });
+
     socket.on('removeDropDown', function(username){
         userDropDown.remove(username);            
     });
@@ -169,21 +163,25 @@ $(function() {
     socket.on('successful escape', function(){
         alert("Congratulations! You are win!");
     });
+
     socket.on('announce start', function() {
         //TODO add anything for user side on start up
         //alert("Game has started");
         myStatus = "SURV";
     });
+
     socket.on('debug', function(message){
         alert(message);
     });
+
     setInterval(function(){
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(sendPosition);
         } else {
             console.log("Geolocation is not supported by this browser.");
         }
-    }, 1000);
+    }, GPS_UPDATE_INTERVAL);
+
     function showPage(){
         if(username != ADMIN_NAME){
             $(adminPanel).hide();
@@ -200,6 +198,7 @@ $(function() {
     function cleanInput (input) {
         return $('<div/>').text(input).text();
     }
+
     function setCookie(cname, cvalue, exdays) {
         var d = new Date();
         d.setTime(d.getTime() + (exdays*24*60*60*1000));
@@ -217,6 +216,4 @@ $(function() {
         }
         return "";
     }
-
 });
-

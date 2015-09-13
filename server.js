@@ -25,6 +25,11 @@ var ADMIN_NAME = "a";
 //30s disconnect timeout
 var DISCONNECT_TIMEOUT = 30;
 
+// 1 minute in milliseconds
+var SURVIVOR_PING_INTERVAL = 60000;
+// 30 seconds in milliseconds
+var ZOMBIE_PING_INTERVAL = 30000;
+
 io.on('connection', function (socket) {
 
     socket.on('username list', function(){
@@ -69,6 +74,7 @@ io.on('connection', function (socket) {
             if (currTime > users[socket.username].disconnect) {
                 users[socket.username].stat = status[2];
             }
+            users[socket.username].id = socket.id;
             socket.broadcast.emit('user reconnected', {
                 username: socket.username,
                 numUsers: numUsers
@@ -115,14 +121,47 @@ io.on('connection', function (socket) {
         users[username].stat = status;
         io.to(users[username].id).emit('change status', status);
     });
+
     socket.on('changeEscaped', function(username, escaped){
         users[username].escaped = escaped;
         if(escaped == "TRUE"){
             io.to(users[username].id).emit('successful escape');            
         }
     });
-    
+
     socket.on('game started', function(){
         socket.broadcast.emit('announce start');
     });
+
+    // Show location of survivors
+    setInterval(function() {
+        var survivorPositions = [];
+        var zombies = []
+        for (var user in users) {
+            if(users[user].stat === status[0]) {
+                survivorPositions.push([users[user].longitude, users[user].latitude]);
+            } else if (users[user].stat === status[1]) {
+                zombies.push(users[user].id);
+            }
+        }
+        for (var i = 0; i < zombies.length; i++) {
+            io.to(zombies[i]).emit('survivor ping', survivorPositions);
+        }        
+    }, SURVIVOR_PING_INTERVAL);
+
+    // Show location of zombies
+    setInterval(function() {
+        var zombiePositions = [];
+        var survivors = []
+        for (var user in users) {
+            if(users[user].stat === status[1]) {
+                zombiePositions.push([users[user].longitude, users[user].latitude]);
+            } else if (users[user].stat === status[0]) {
+                survivors.push(users[user].id);
+            }
+        }
+        for (var i = 0; i < survivors.length; i++) {
+            io.to(survivors[i]).emit('zombie ping', zombiePositions);
+        }
+    }, ZOMBIE_PING_INTERVAL);
 });
