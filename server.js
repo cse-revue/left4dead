@@ -83,8 +83,8 @@ io.on('connection', function (socket) {
         //gets current time
         var d = new Date();
         //sets dead timeout for 30 seconds
-        if (user[socket.username]) {
-            user[socket.username].disconnect.setTime(d.getTime() + DISCONNECT_TIMEOUT * 1000);
+        if (users[socket.username]) {
+            users[socket.username].disconnect.setTime(d.getTime() + DISCONNECT_TIMEOUT * 1000);
         }
         
         
@@ -120,5 +120,9 @@ io.on('connection', function (socket) {
         if(escaped == "TRUE"){
             io.to(users[username].id).emit('successful escape');            
         }
+    });
+    
+    socket.on('game started', function(){
+        socket.broadcast.emit('announce start');
     });
 });
